@@ -26,6 +26,7 @@ public:
   aigman(int nPis, int nPos) : nPis(nPis), nPos(nPos) {
     nGates = 0;
     nObjs = nPis + 1;
+    vObjs.resize(nObjs * 2);
     for(int i = 0; i < nPos; i++) {
       vPos.push_back(0);
     }
@@ -56,6 +57,19 @@ public:
     return *this;
   }
 
+  void clear() {
+    nPis = 0;
+    nPos = 0;
+    nGates = 0;
+    nObjs = 0;
+    vPos.clear();
+    vObjs.clear();
+    vValues.clear();
+    vDeads.clear();
+    vvFanouts.clear();
+    vLevels.clear();
+  }
+
   void negate() {
     for(int i = 0; i < nPos; i++) {
       vPos[i] = vPos[i] ^ 1;
@@ -80,4 +94,7 @@ public:
 
   void save(int i = 0);
   void load(int i = 0);
+
+  int extract_rec(aigman * aig_new, int i);
+  aigman * extract(std::vector<int> const & inputs, std::vector<int> const & outputs);
 };

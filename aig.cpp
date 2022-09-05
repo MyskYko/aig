@@ -124,7 +124,7 @@ int aigman::getvalue(int i) {
 }
 
 void aigman::simulate(vector<int> const & inputs) {
-  assert(inputs.size() == nPis);
+  assert(inputs.size() == (size_t)nPis);
   vValues.resize(nObjs);
   vValues[0] = 0; // constant
   for(int i = 0; i < nPis; i++) {
@@ -360,13 +360,44 @@ void aigman::replacenode(int i, int j, bool prop) {
 }
 
 void aigman::save(int i) {
-  if(backup.size() <= i) {
+  if(backup.size() <= (size_t)i) {
     backup.resize(i + 1);
   }
   backup[i] = *this;
 }
 
 void aigman::load(int i) {
-  assert(backup.size() > i);
+  assert(backup.size() > (size_t)i);
   *this = backup[i];
+}
+
+int aigman::extract_rec(aigman * aig_new, int i) {
+  if(vValues[i]) {
+    return vValues[i];
+  }
+  int i0 = vObjs[i + i] >> 1;
+  bool c0 = vObjs[i + i] & 1;
+  i0 = extract_rec(aig_new, i0);
+  int i1 = vObjs[i + i + 1] >> 1;
+  bool c1 = vObjs[i + i + 1] & 1;
+  i1 = extract_rec(aig_new, i1);
+  aig_new->vObjs.push_back((i0 << 1) ^ c0);
+  aig_new->vObjs.push_back((i1 << 1) ^ c1);
+  vValues[i] = aig_new->nObjs++;
+  aig_new->nGates++;
+  return vValues[i];
+}
+
+aigman * aigman::extract(vector<int> const & inputs, vector<int> const & outputs) {
+  vValues.clear();
+  vValues.resize(nObjs);
+  aigman * aig_new = new aigman(inputs.size(), 0);
+  for(int i = 0; (size_t)i < inputs.size(); i++) {
+    vValues[inputs[i]] = i + 1;
+  }
+  for(int i: outputs) {
+    aig_new->vPos.push_back((extract_rec(aig_new, i >> 1) << 1) ^ (i & 1));
+    aig_new->nPos++;
+  }
+  return aig_new;
 }
