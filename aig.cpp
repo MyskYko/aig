@@ -88,6 +88,7 @@ int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {
 }
 
 void aigman::renumber() {
+  vDeads.clear();
   vValues.clear();
   vValues.resize(nObjs);
   int nObjsNew = nPis + 1;
@@ -400,4 +401,38 @@ aigman * aigman::extract(vector<int> const & inputs, vector<int> const & outputs
     aig_new->nPos++;
   }
   return aig_new;
+}
+
+
+void aigman::import(aigman * p, vector<int> const & inputs, vector<int> const & outputs) {
+  if(vvFanouts.empty()) {
+    supportfanouts();
+  }
+  p->vValues.clear();
+  p->vValues.resize(p->nObjs);
+  assert(inputs.size() == (size_t)p->nPis);
+  for(int i = 0; i < p->nPis; i++) {
+    p->vValues[i + 1] = inputs[i];
+  }
+  for(int i = p->nPis + 1; i < p->nObjs; i++) {
+    int i0 = p->vObjs[i + i] >> 1;
+    bool c0 = p->vObjs[i + i] & 1;
+    i0 = p->vValues[i0];
+    int i1 = p->vObjs[i + i + 1] >> 1;
+    bool c1 = p->vObjs[i + i + 1] & 1;
+    i1 = p->vValues[i1];
+    vObjs.push_back((i0 << 1) ^ c0);
+    vObjs.push_back((i1 << 1) ^ c1);
+    vvFanouts[i0].push_back(nObjs);
+    vvFanouts[i1].push_back(nObjs);
+    p->vValues[i] = nObjs++;
+    nGates++;
+    vvFanouts.resize(nObjs);
+  }
+  vDeads.resize(nObjs);
+  assert(outputs.size() <= (size_t)p->nPos);
+  for(int i = 0; (size_t)i < outputs.size(); i++) {
+    int j = (p->vValues[p->vPos[i] >> 1] << 1) ^ (p->vPos[i] & 1) ^ (outputs[i] & 1);
+    replacenode(outputs[i] >> 1, j);
+  }
 }

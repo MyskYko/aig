@@ -97,4 +97,6 @@ public:
 
   int extract_rec(aigman * aig_new, int i);
   aigman * extract(std::vector<int> const & inputs, std::vector<int> const & outputs);
+
+  void import(aigman * p, std::vector<int> const & inputs, std::vector<int> const & outputs);
 };
