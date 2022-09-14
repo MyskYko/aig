@@ -74,6 +74,8 @@ void aigman::read(string filename) {
   }
 
   f.close();
+
+  fSorted = true;
 }
 
 int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {
@@ -103,7 +105,10 @@ void aigman::renumber() {
 }
 
 void aigman::write(string filename) {
-  renumber();
+  if(!fSorted) {
+    renumber();
+    fSorted = true;
+  }
   ofstream f(filename);
   f << "aig " << nObjs - 1 << " " << nPis << " 0 " << nPos << " " << nObjs - nPis - 1 << endl;
   for(int i = 0; i < nPos; i++) {
@@ -225,11 +230,13 @@ void aigman::supportlevels() {
 }
 
 void aigman::removenode(int i) {
-  assert(!vDeads.empty());
   if(i <= nPis) return;
-  if(vDeads[i]) return;
+  if(vDeads.empty()) {
+    vDeads.resize(nObjs);
+  } else if(vDeads[i]) return;
   vDeads[i] = 1;
   nGates--;
+  fSorted = false;
   if(vvFanouts.empty()) return;
   assert(vvFanouts[i].empty());
   {
@@ -273,10 +280,14 @@ void aigman::removenode(int i) {
 void aigman::replacenode(int i, int j, bool prop) {
   assert(i >= 0);
   assert(j >= 0);
-  assert(!vDeads.empty());
+  if(vDeads.empty()) {
+    vDeads.resize(nObjs);
+  }
   assert(!vDeads[i]);
   assert(!vDeads[j >> 1]);
-  assert(!vvFanouts.empty());
+  if(vvFanouts.empty()) {
+    supportfanouts();
+  }
   std::vector<int> targets = vvFanouts[i];
   if(i == (j >> 1)) {
     if(j & 1) {
@@ -316,6 +327,7 @@ void aigman::replacenode(int i, int j, bool prop) {
     removenode(i);
   }
 
+  fSorted = false;
   if(!prop) return;
 
   for(int k : targets) {

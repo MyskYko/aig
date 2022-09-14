@@ -10,6 +10,7 @@ public:
   int nPos;
   int nGates;
   int nObjs;
+  bool fSorted;
   std::vector<int> vPos;
   std::vector<int> vObjs;
   std::vector<int> vValues;
@@ -30,12 +31,14 @@ public:
     for(int i = 0; i < nPos; i++) {
       vPos.push_back(0);
     }
+    fSorted = true;
   };
   aigman(const aigman & x) {
     nPis = x.nPis;
     nPos = x.nPos;
     nGates = x.nGates;
     nObjs = x.nObjs;
+    fSorted = x.fSorted;
     vPos = x.vPos;
     vObjs = x.vObjs;
     vValues = x.vValues;
@@ -49,6 +52,7 @@ public:
     nPos = x.nPos;
     nGates = x.nGates;
     nObjs = x.nObjs;
+    fSorted = x.fSorted;
     vPos = x.vPos;
     vObjs = x.vObjs;
     vValues = x.vValues;
@@ -64,6 +68,7 @@ public:
     nPos = 0;
     nGates = 0;
     nObjs = 0;
+    fSorted = true;
     vPos.clear();
     vObjs.clear();
     vValues.clear();
@@ -71,12 +76,6 @@ public:
     vvFanouts.clear();
     vLevels.clear();
     vSims.clear();
-  }
-
-  void negate() {
-    for(int i = 0; i < nPos; i++) {
-      vPos[i] = vPos[i] ^ 1;
-    }
   }
 
   void read(std::string filename);
