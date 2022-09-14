@@ -116,32 +116,24 @@ void aigman::write(string filename) {
   f.close();
 }
 
-int aigman::getvalue(int i) {
+int aigman::getsim(int i) {
   assert((i >> 1) < nObjs);
   if(i & 1) {
-    return vValues[i >> 1] ^ 0xffffffff;
+    return vSims[i >> 1] ^ 0xffffffffffffffffull;
   }
-  return vValues[i >> 1];
+  return vSims[i >> 1];
 }
 
-void aigman::simulate(vector<int> const & inputs) {
+void aigman::simulate(vector<unsigned long long> const & inputs) {
   assert(inputs.size() == (size_t)nPis);
-  vValues.resize(nObjs);
-  vValues[0] = 0; // constant
+  vSims.resize(nObjs);
+  vSims[0] = 0; // constant
   for(int i = 0; i < nPis; i++) {
-    vValues[i + 1] = inputs[i];
+    vSims[i + 1] = inputs[i];
   }
   for(int i = nPis + 1; i < nObjs; i++) {
-    vValues[i] = getvalue(vObjs[i + i]) & getvalue(vObjs[i + i + 1]);
+    vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
   }
-}
-
-int bitCount(uint bits) {
-  bits = (bits & 0x55555555) + (bits >> 1 & 0x55555555);
-  bits = (bits & 0x33333333) + (bits >> 2 & 0x33333333);
-  bits = (bits & 0x0f0f0f0f) + (bits >> 4 & 0x0f0f0f0f);
-  bits = (bits & 0x00ff00ff) + (bits >> 8 & 0x00ff00ff);
-  return (bits & 0x0000ffff) + (bits >> 16);
 }
 
 void aigman::supportfanouts_rec(int i) {

@@ -18,7 +18,7 @@ public:
   std::vector<std::vector<int> > vvFanouts;
   std::vector<int> vLevels;
 
-  std::mt19937 rnd;
+  std::vector<unsigned long long> vSims;
 
   std::vector<aigman> backup;
 
@@ -42,6 +42,7 @@ public:
     vDeads = x.vDeads;
     vvFanouts = x.vvFanouts;
     vLevels = x.vLevels;
+    vSims = x.vSims;
   }
   aigman &operator=(const aigman & x) {
     nPis = x.nPis;
@@ -54,6 +55,7 @@ public:
     vDeads = x.vDeads;
     vvFanouts = x.vvFanouts;
     vLevels = x.vLevels;
+    vSims = x.vSims;
     return *this;
   }
 
@@ -68,6 +70,7 @@ public:
     vDeads.clear();
     vvFanouts.clear();
     vLevels.clear();
+    vSims.clear();
   }
 
   void negate() {
@@ -79,8 +82,8 @@ public:
   void read(std::string filename);
   void write(std::string filename);
 
-  int getvalue(int i);
-  void simulate(std::vector<int> const & inputs);
+  int getsim(int i);
+  void simulate(std::vector<unsigned long long> const & inputs);
 
   void supportfanouts_rec(int i);
   void supportfanouts();
