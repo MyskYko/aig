@@ -17,7 +17,6 @@ public:
 
   std::vector<bool> vDeads;
   std::vector<std::vector<int> > vvFanouts;
-  std::vector<int> vLevels;
 
   std::vector<unsigned long long> vSims;
 
@@ -44,7 +43,6 @@ public:
     vValues = x.vValues;
     vDeads = x.vDeads;
     vvFanouts = x.vvFanouts;
-    vLevels = x.vLevels;
     vSims = x.vSims;
   }
   aigman &operator=(const aigman & x) {
@@ -58,7 +56,6 @@ public:
     vValues = x.vValues;
     vDeads = x.vDeads;
     vvFanouts = x.vvFanouts;
-    vLevels = x.vLevels;
     vSims = x.vSims;
     return *this;
   }
@@ -74,7 +71,6 @@ public:
     vValues.clear();
     vDeads.clear();
     vvFanouts.clear();
-    vLevels.clear();
     vSims.clear();
   }
 
@@ -91,8 +87,6 @@ public:
 
   int renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew);
   void renumber();
-
-  void supportlevels();
 
   void save(int i = 0);
   void load(int i = 0);
