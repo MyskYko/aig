@@ -79,7 +79,7 @@ public:
   void getgates_rec(std::vector<int> & gates, int i);
   void getgates(std::vector<int> & gates);
 
-  int getsim(int i);
+  unsigned long long getsim(int i);
   void simulate(std::vector<unsigned long long> const & inputs);
 
   void supportfanouts_rec(int i);

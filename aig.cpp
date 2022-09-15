@@ -136,7 +136,7 @@ void aigman::getgates(vector<int> & gates) {
   }
 }
 
-int aigman::getsim(int i) {
+unsigned long long aigman::getsim(int i) {
   assert((i >> 1) < nObjs);
   if(i & 1) {
     return ~vSims[i >> 1];
