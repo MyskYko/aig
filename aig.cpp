@@ -75,10 +75,10 @@ int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {
   if(vValues[i]) {
     return vValues[i];
   }
-  for(int ii = i + i; ii <= i + i + 1; ii++) {
-    int j = renumber_rec(vObjs[ii] >> 1, vObjsNew, nObjsNew);
-    vObjsNew.push_back((j << 1) ^ (vObjs[ii] & 1));
-  }
+  int i0 = renumber_rec(vObjs[i + i] >> 1, vObjsNew, nObjsNew);
+  int i1 = renumber_rec(vObjs[i + i + 1] >> 1, vObjsNew, nObjsNew);
+  vObjsNew[nObjsNew + nObjsNew] = (i0 << 1) + (vObjs[i + i] & 1);
+  vObjsNew[nObjsNew + nObjsNew + 1] = (i1 << 1) + (vObjs[i + i + 1] & 1);
   vValues[i] = nObjsNew++;
   return vValues[i];
 }
@@ -88,8 +88,7 @@ void aigman::renumber() {
   vValues.clear();
   vValues.resize(nObjs);
   int nObjsNew = nPis + 1;
-  std::vector<int> vObjsNew(nObjsNew * 2);
-  vObjsNew.reserve((nObjsNew + nGates) * 2);
+  std::vector<int> vObjsNew((nObjsNew + nGates) * 2);
   for(int i = 0; i < nPos; i++) {
     int j = vPos[i] >> 1;
     vPos[i] = (renumber_rec(j, vObjsNew, nObjsNew) << 1) ^ (vPos[i] & 1);
