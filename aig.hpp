@@ -97,4 +97,9 @@ public:
   aigman * extract(std::vector<int> const & inputs, std::vector<int> const & outputs);
 
   void import(aigman * p, std::vector<int> const & inputs, std::vector<int> const & outputs);
+
+  void getfocone_rec(std::vector<int> & gates, int i);
+  void getfocone(std::vector<int> const & nodes, std::vector<int> & gates);
+
+  void resimulate(std::vector<int> const & nodes, std::vector<unsigned long long> const & values);
 };

@@ -159,7 +159,7 @@ void aigman::simulate(vector<unsigned long long> const & inputs) {
   } else {
     vector<int> gates;
     getgates(gates);
-    for(int i: gates) {
+    for(int i : gates) {
       vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
     }
   }
@@ -324,7 +324,7 @@ aigman * aigman::extract(vector<int> const & inputs, vector<int> const & outputs
   for(int i = 0; (size_t)i < inputs.size(); i++) {
     vValues[inputs[i]] = i + 1;
   }
-  for(int i: outputs) {
+  for(int i : outputs) {
     aig_new->vPos.push_back((extract_rec(aig_new, i >> 1) << 1) ^ (i & 1));
     aig_new->nPos++;
   }
@@ -357,5 +357,46 @@ void aigman::import(aigman * p, vector<int> const & inputs, vector<int> const & 
   for(int i = 0; (size_t)i < outputs.size(); i++) {
     int j = (p->vValues[p->vPos[i] >> 1] << 1) ^ (p->vPos[i] & 1) ^ (outputs[i] & 1);
     replacenode(outputs[i] >> 1, j);
+  }
+}
+
+void aigman::getfocone_rec(vector<int> & gates, int i) {
+  if(i <= nPis || vValues[i]) {
+    return;
+  }
+  bool f = false;
+  for(int ii = i + i; ii <= i + i + 1; ii++) {
+    int j = vObjs[ii] >> 1;
+    getfocone_rec(gates, j);
+    f |= vValues[j];
+  }
+  if(f) {
+    gates.push_back(i);
+    vValues[i] = 1;
+  }
+}
+
+void aigman::getfocone(vector<int> const & nodes, vector<int> & gates) {
+  vValues.clear();
+  vValues.resize(nObjs);
+  for(int i : nodes) {
+    vValues[i] = 1;
+  }
+  for(int i = 0; i < nPos; i++) {
+    int j = vPos[i] >> 1;
+    getfocone_rec(gates, j);
+  }
+}
+
+void aigman::resimulate(vector<int> const & nodes, vector<unsigned long long> const & values) {
+  assert(!vSims.empty());
+  assert(nodes.size() == values.size());
+  vector<int> gates;
+  getfocone(nodes, gates);
+  for(int i = 0; (size_t)i < nodes.size(); i++) {
+    vSims[nodes[i]] = values[i];
+  }
+  for(int i : gates) {
+    vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
   }
 }
