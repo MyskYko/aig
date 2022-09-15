@@ -116,6 +116,27 @@ void aigman::write(string filename) {
   f.close();
 }
 
+void aigman::getgates_rec(vector<int> & gates, int i) {
+  if(i <= nPis || vValues[i]) {
+    return;
+  }
+  for(int ii = i + i; ii <= i + i + 1; ii++) {
+    int j = vObjs[ii] >> 1;
+    getgates_rec(gates, j);
+  }
+  gates.push_back(i);
+  vValues[i] = 1;
+}
+
+void aigman::getgates(vector<int> & gates) {
+  vValues.clear();
+  vValues.resize(nObjs);
+  for(int i = 0; i < nPos; i++) {
+    int j = vPos[i] >> 1;
+    getgates_rec(gates, j);
+  }
+}
+
 int aigman::getsim(int i) {
   assert((i >> 1) < nObjs);
   if(i & 1) {
@@ -136,7 +157,11 @@ void aigman::simulate(vector<unsigned long long> const & inputs) {
       vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
     }
   } else {
-    abort();
+    vector<int> gates;
+    getgates(gates);
+    for(int i: gates) {
+      vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
+    }
   }
 }
 

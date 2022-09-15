@@ -59,7 +59,6 @@ public:
     vSims = x.vSims;
     return *this;
   }
-
   void clear() {
     nPis = 0;
     nPos = 0;
@@ -76,6 +75,9 @@ public:
 
   void read(std::string filename);
   void write(std::string filename);
+
+  void getgates_rec(std::vector<int> & gates, int i);
+  void getgates(std::vector<int> & gates);
 
   int getsim(int i);
   void simulate(std::vector<unsigned long long> const & inputs);
