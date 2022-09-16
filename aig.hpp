@@ -101,5 +101,8 @@ public:
   void getfocone_rec(std::vector<int> & gates, int i);
   void getfocone(std::vector<int> const & nodes, std::vector<int> & gates);
 
+  bool reach_rec(int i);
+  bool reach(std::vector<int> const & nodes, std::vector<int> const & gates);
+
   void resimulate(std::vector<int> const & nodes, std::vector<unsigned long long> const & values);
 };

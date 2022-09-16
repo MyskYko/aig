@@ -383,6 +383,42 @@ void aigman::getfocone(vector<int> const & nodes, vector<int> & gates) {
   }
 }
 
+bool aigman::reach_rec(int i) {
+  if(vValues[i] == 2) {
+    return true;
+  }
+  if(vValues[i]) {
+    return false;
+  }
+  for(int j : vvFanouts[i]) {
+    if(j < 0) {
+      continue;
+    }
+    if(reach_rec(j)) {
+      return true;
+    }
+  }
+  vValues[i] = 1;
+  return false;
+}
+
+bool aigman::reach(vector<int> const & nodes, vector<int> const & gates) {
+  if(vvFanouts.empty()) {
+    supportfanouts();
+  }
+  vValues.clear();
+  vValues.resize(nObjs);
+  for(int i : gates) {
+    vValues[i] = 2;
+  }
+  for(int i : nodes) {
+    if(reach_rec(i)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void aigman::resimulate(vector<int> const & nodes, vector<unsigned long long> const & values) {
   assert(!vSims.empty());
   assert(nodes.size() == values.size());
