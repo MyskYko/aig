@@ -421,14 +421,8 @@ bool aigman::reach(vector<int> const & nodes, vector<int> const & gates) {
   return false;
 }
 
-void aigman::resimulate(vector<int> const & nodes, vector<unsigned long long> const & values) {
+void aigman::resimulate(vector<int> const & gates) {
   assert(!vSims.empty());
-  assert(nodes.size() == values.size());
-  vector<int> gates;
-  getfocone(nodes, gates);
-  for(int i = 0; (size_t)i < nodes.size(); i++) {
-    vSims[nodes[i]] = values[i];
-  }
   for(int i : gates) {
     vSims[i] = getsim(vObjs[i + i]) & getsim(vObjs[i + i + 1]);
   }
