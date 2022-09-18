@@ -363,10 +363,12 @@ void aigman::getfocone_rec(vector<int> & gates, int i) {
   for(int ii = i + i; ii <= i + i + 1; ii++) {
     int j = vObjs[ii] >> 1;
     getfocone_rec(gates, j);
-    f |= vValues[j];
+    f |= (vValues[j] == 2);
   }
   if(f) {
     gates.push_back(i);
+    vValues[i] = 2;
+  } else {
     vValues[i] = 1;
   }
 }
@@ -375,7 +377,7 @@ void aigman::getfocone(vector<int> const & nodes, vector<int> & gates) {
   vValues.clear();
   vValues.resize(nObjs);
   for(int i : nodes) {
-    vValues[i] = 1;
+    vValues[i] = 2;
   }
   for(int i = 0; i < nPos; i++) {
     int j = vPos[i] >> 1;
