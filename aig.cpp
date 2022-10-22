@@ -64,8 +64,6 @@ void aigman::read(string filename) {
     vObjs[i + i] = i + i - decode(f);
     vObjs[i + i + 1] = vObjs[i + i] - decode(f);
   }
-  // finishing
-  f.close();
 }
 
 int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {
@@ -115,7 +113,6 @@ void aigman::write(string filename) {
     encode(f, i + i - vObjs[i + i]);
     encode(f, vObjs[i + i] - vObjs[i + i + 1]);
   }
-  f.close();
 }
 
 void aigman::getgates_rec(vector<int> & gates, int i) {
