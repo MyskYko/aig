@@ -66,7 +66,6 @@ void aigman::read(string filename) {
   }
   // finishing
   f.close();
-  fSorted = true;
 }
 
 int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {

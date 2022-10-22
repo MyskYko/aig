@@ -28,6 +28,9 @@ public:
       vPos.push_back(0);
     }
   };
+  aigman(std::string filename) {
+    read(filename);
+  }
   aigman(const aigman & x) {
     nPis = x.nPis;
     nPos = x.nPos;
