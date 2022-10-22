@@ -73,10 +73,13 @@ int aigman::renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew) {
   if(vValues[i]) {
     return vValues[i];
   }
-  int i0 = renumber_rec(vObjs[i + i] >> 1, vObjsNew, nObjsNew);
-  int i1 = renumber_rec(vObjs[i + i + 1] >> 1, vObjsNew, nObjsNew);
-  vObjsNew[nObjsNew + nObjsNew] = (i0 << 1) + (vObjs[i + i] & 1);
-  vObjsNew[nObjsNew + nObjsNew + 1] = (i1 << 1) + (vObjs[i + i + 1] & 1);
+  int i1 = (renumber_rec(vObjs[i + i + 1] >> 1, vObjsNew, nObjsNew) << 1) ^ (vObjs[i + i + 1] & 1);
+  int i0 = (renumber_rec(vObjs[i + i] >> 1, vObjsNew, nObjsNew) << 1) ^ (vObjs[i + i] & 1);
+  if(i0 < i1) {
+    std::swap(i0, i1);
+  }
+  vObjsNew[nObjsNew + nObjsNew] = i0;
+  vObjsNew[nObjsNew + nObjsNew + 1] = i1;
   vValues[i] = nObjsNew++;
   return vValues[i];
 }
@@ -91,6 +94,7 @@ void aigman::renumber() {
     int j = vPos[i] >> 1;
     vPos[i] = (renumber_rec(j, vObjsNew, nObjsNew) << 1) ^ (vPos[i] & 1);
   }
+  vObjsNew.resize(nObjsNew * 2);
   vObjs = vObjsNew;
   nObjs = nObjsNew;
   assert(nObjs == 1 + nPis + nGates);
