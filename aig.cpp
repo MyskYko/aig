@@ -8,12 +8,12 @@
 
 using namespace std;
 
-unsigned char getnoneofch(ifstream & file) {
+static inline unsigned char getnoneofch(ifstream & file) {
   int ch = file.get();
   assert(ch != EOF);
   return ch;
 }
-unsigned decode(ifstream & file) {
+static inline unsigned decode(ifstream & file) {
   unsigned x = 0, i = 0;
   unsigned char ch;
   while((ch = getnoneofch(file)) & 0x80) {
@@ -21,7 +21,7 @@ unsigned decode(ifstream & file) {
   }
   return x | (ch << (7 * i));
 }
-void encode(ofstream & file, unsigned x) {
+static inline void encode(ofstream & file, unsigned x) {
   unsigned char ch;
   while(x & ~0x7f) {
     ch = (x & 0x7f) | 0x80;
