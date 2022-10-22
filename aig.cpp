@@ -94,7 +94,6 @@ void aigman::renumber() {
     int j = vPos[i] >> 1;
     vPos[i] = (renumber_rec(j, vObjsNew, nObjsNew) << 1) ^ (vPos[i] & 1);
   }
-  vObjsNew.resize(nObjsNew * 2);
   vObjs = vObjsNew;
   nObjs = nObjsNew;
   assert(nObjs == 1 + nPis + nGates);
