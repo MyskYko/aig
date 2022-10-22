@@ -21,15 +21,12 @@ public:
 
   std::vector<aigman> backup;
 
-  aigman() {};
-  aigman(int nPis, int nPos) : nPis(nPis), nPos(nPos) {
-    nGates = 0;
-    nObjs = nPis + 1;
+  aigman() : nPis(0), nPos(0), nGates(0), nObjs(1), fSorted(true) {};
+  aigman(int nPis, int nPos) : nPis(nPis), nPos(nPos), nGates(0), nObjs(nPis + 1), fSorted(true) {
     vObjs.resize(nObjs * 2);
     for(int i = 0; i < nPos; i++) {
       vPos.push_back(0);
     }
-    fSorted = true;
   };
   aigman(const aigman & x) {
     nPis = x.nPis;
@@ -62,7 +59,7 @@ public:
     nPis = 0;
     nPos = 0;
     nGates = 0;
-    nObjs = 0;
+    nObjs = 1;
     fSorted = true;
     vPos.clear();
     vObjs.clear();

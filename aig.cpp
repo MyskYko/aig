@@ -33,6 +33,7 @@ void encode(ofstream & file, unsigned x) {
 }
 
 void aigman::read(string filename) {
+  clear();
   ifstream f(filename);
   string str;
   // header
@@ -96,12 +97,15 @@ void aigman::renumber() {
   vObjs = vObjsNew;
   nObjs = nObjsNew;
   assert(nObjs == 1 + nPis + nGates);
+  if(!vvFanouts.empty()) {
+    supportfanouts();
+  }
+  fSorted = true;
 }
 
 void aigman::write(string filename) {
   if(!fSorted) {
     renumber();
-    fSorted = true;
   }
   ofstream f(filename);
   f << "aig " << nObjs - 1 << " " << nPis << " 0 " << nPos << " " << nObjs - nPis - 1 << endl;
