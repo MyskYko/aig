@@ -119,23 +119,35 @@ void aigman::write(string filename) {
 }
 
 void aigman::getgates_rec(vector<int> & gates, int i) {
-  if(i <= nPis || vValues[i]) {
+  if(vValues[i]) {
     return;
   }
   for(int ii = i + i; ii <= i + i + 1; ii++) {
-    int j = vObjs[ii] >> 1;
-    getgates_rec(gates, j);
+    getgates_rec(gates, vObjs[ii] >> 1);
   }
   gates.push_back(i);
   vValues[i] = 1;
 }
 
+void aigman::getgates(std::vector<int> & gates, std::vector<int> const & inputs, std::vector<int> const & outputs) {
+  vValues.clear();
+  vValues.resize(nObjs);
+  for(int i : inputs) {
+    vValues[i] = 1;
+  }
+  for(int i : outputs) {
+    getgates_rec(gates, i);
+  }
+}
+
 void aigman::getgates(vector<int> & gates) {
   vValues.clear();
   vValues.resize(nObjs);
+  for(int i = 0; i <= nPis; i++) {
+    vValues[i] = 1;
+  }
   for(int i = 0; i < nPos; i++) {
-    int j = vPos[i] >> 1;
-    getgates_rec(gates, j);
+    getgates_rec(gates, vPos[i] >> 1);
   }
 }
 
