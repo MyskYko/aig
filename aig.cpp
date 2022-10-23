@@ -314,7 +314,6 @@ void aigman::load(int i) {
   *this = backup[i];
 }
 
-
 aigman * aigman::extract(vector<int> const & inputs, vector<int> const & outputs) {
   vector<int> gates;
   getgates(gates, inputs, outputs);
@@ -342,29 +341,42 @@ aigman * aigman::extract(vector<int> const & inputs, vector<int> const & outputs
   return p;
 }
 
+int aigman::newgate(int i0, int i1) {
+  fSorted = false;
+  vObjs.push_back(i0);
+  vObjs.push_back(i1);
+  nGates++;
+  if(!vDeads.empty()) {
+    vDeads.resize(nObjs + 1);
+  }
+  if(!vvFanouts.empty()) {
+    vvFanouts[i0 >> 1].push_back(nObjs);
+    vvFanouts[i1 >> 1].push_back(nObjs);
+    vvFanouts.resize(nObjs + 1);
+  }
+  if(!vSims.empty()) {
+    vSims.resize(nObjs + 1);
+  }
+  return nObjs++;
+}
+
 void aigman::import(aigman * p, vector<int> const & inputs, vector<int> const & outputs) {
-  if(vvFanouts.empty()) {
-    supportfanouts();
+  assert((int)inputs.size() == p->nPis);
+  assert((int)outputs.size() == p->nPos);
+  if(!p->fSorted) {
+    p->renumber();
   }
   p->vValues.clear();
   p->vValues.resize(p->nObjs);
-  assert(inputs.size() == (size_t)p->nPis);
   for(int i = 0; i < p->nPis; i++) {
     p->vValues[i + 1] = inputs[i];
   }
   for(int i = p->nPis + 1; i < p->nObjs; i++) {
-    for(int ii = i + i; ii <= i + i + 1; ii++) {
-      int j = p->vValues[p->vObjs[ii] >> 1];
-      vObjs.push_back((j << 1) ^ (p->vObjs[ii] & 1));
-      vvFanouts[j].push_back(nObjs);
-    }
-    p->vValues[i] = nObjs++;
-    nGates++;
-    vvFanouts.resize(nObjs);
+    int i0 = (p->vValues[p->vObjs[i + i] >> 1] << 1) ^ (p->vObjs[i + i] & 1);
+    int i1 = (p->vValues[p->vObjs[i + i + 1] >> 1] << 1) ^ (p->vObjs[i + i + 1] & 1);
+    p->vValues[i] = newgate(i0, i1);
   }
-  vDeads.resize(nObjs);
-  assert(outputs.size() <= (size_t)p->nPos);
-  for(int i = 0; (size_t)i < outputs.size(); i++) {
+  for(int i = 0; i < p->nPos; i++) {
     int j = (p->vValues[p->vPos[i] >> 1] << 1) ^ (p->vPos[i] & 1) ^ (outputs[i] & 1);
     replacenode(outputs[i] >> 1, j);
   }

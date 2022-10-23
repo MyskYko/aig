@@ -95,6 +95,8 @@ public:
 
   aigman * extract(std::vector<int> const & inputs, std::vector<int> const & outputs);
 
+  int newgate(int i0, int i1);
+
   void import(aigman * p, std::vector<int> const & inputs, std::vector<int> const & outputs);
 
   void getfocone_rec(std::vector<int> & gates, int i);
