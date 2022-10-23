@@ -93,7 +93,6 @@ public:
   void save(int i = 0);
   void load(int i = 0);
 
-  int extract_rec(aigman * aig_new, int i);
   aigman * extract(std::vector<int> const & inputs, std::vector<int> const & outputs);
 
   void import(aigman * p, std::vector<int> const & inputs, std::vector<int> const & outputs);
