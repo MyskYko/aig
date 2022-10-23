@@ -76,6 +76,7 @@ public:
   void write(std::string filename);
 
   void getgates_rec(std::vector<int> & gates, int i);
+  void getgates(std::vector<int> & gates, std::vector<int> const & inputs, std::vector<int> const & outputs);
   void getgates(std::vector<int> & gates);
 
   unsigned long long getsim(int i);
