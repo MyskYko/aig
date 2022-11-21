@@ -230,7 +230,31 @@ void aigman::removenode(int i) {
   }
 }
 
-void aigman::replacenode(int i, int j, bool prop) {
+void aigman::trivialoptimization(int i) {
+  if(i < 0 || vDeads[i]) {
+    return;
+  }
+  if((vObjs[i + i] >> 1) == (vObjs[i + i + 1] >> 1)) {
+    if(vObjs[i + i] == vObjs[i + i + 1]) {
+      replacenode(i, vObjs[i + i]);
+    } else {
+      replacenode(i, 0);
+    }
+    return;
+  }
+  for(int ii = i + i; ii <= i + i + 1; ii++) {
+    if(!(vObjs[ii] >> 1)) {
+      if(vObjs[ii]) {
+        replacenode(i, vObjs[ii ^ 1]);
+      } else {
+        replacenode(i, 0);
+      }
+      return;
+    }
+  }
+}
+
+void aigman::replacenode(int i, int j, bool opt) {
   if(vDeads.empty()) {
     vDeads.resize(nObjs);
   }
@@ -273,31 +297,9 @@ void aigman::replacenode(int i, int j, bool prop) {
   }
   // finishing
   fSorted = false;
-  if(!prop) {
-    return;
-  }
-  // optimize fanouts if it is trivial
-  for(int k : targets) {
-    if(k < 0 || vDeads[k]) {
-      continue;
-    }
-    if((vObjs[k + k] >> 1) == (vObjs[k + k + 1] >> 1)) {
-      if((vObjs[k + k] & 1) == (vObjs[k + k + 1] & 1)) {
-        replacenode(k, 1);
-      } else {
-        replacenode(k, 0);
-      }
-      continue;
-    }
-    for(int kk = k + k; kk <= k + k + 1; kk++) {
-      if(!(vObjs[kk] >> 1)) {
-        if(vObjs[kk] & 1) {
-          replacenode(k, vObjs[kk ^ 1]);
-        } else {
-          replacenode(k, 0);
-        }
-        continue;
-      }
+  if(opt) {
+    for(int k : targets) {
+      trivialoptimization(k);
     }
   }
 }
@@ -378,7 +380,13 @@ void aigman::import(aigman * p, vector<int> const & inputs, vector<int> const & 
   }
   for(int i = 0; i < p->nPos; i++) {
     int j = (p->vValues[p->vPos[i] >> 1] << 1) ^ (p->vPos[i] & 1) ^ (outputs[i] & 1);
-    replacenode(outputs[i] >> 1, j);
+    replacenode(outputs[i] >> 1, j, false);
+  }
+  for(int i = 0; i < p->nPos; i++) {
+    int j = p->vValues[p->vPos[i] >> 1];
+    for(int k : vvFanouts[j]) {
+      trivialoptimization(k);
+    }
   }
 }
 

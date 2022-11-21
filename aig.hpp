@@ -85,7 +85,8 @@ public:
   void supportfanouts_rec(int i);
   void supportfanouts();
   void removenode(int i);
-  void replacenode(int i, int j, bool prop = 1);
+  void trivialoptimization(int i);
+  void replacenode(int i, int j, bool opt = true);
 
   int renumber_rec(int i, std::vector<int> & vObjsNew, int & nObjsNew);
   void renumber();
