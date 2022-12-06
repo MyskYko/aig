@@ -379,8 +379,18 @@ void aigman::import(aigman * p, vector<int> const & inputs, vector<int> const & 
     p->vValues[i] = newgate(i0, i1);
   }
   for(int i = 0; i < p->nPos; i++) {
+    int j = p->vValues[p->vPos[i] >> 1];
+    vvFanouts[j].push_back(0xffffffff);
+  }
+  for(int i = 0; i < p->nPos; i++) {
     int j = (p->vValues[p->vPos[i] >> 1] << 1) ^ (p->vPos[i] & 1) ^ (outputs[i] & 1);
     replacenode(outputs[i] >> 1, j, false);
+  }
+  for(int i = 0; i < p->nPos; i++) {
+    int j = p->vValues[p->vPos[i] >> 1];
+    auto it = find(vvFanouts[j].begin(), vvFanouts[j].end(), 0xffffffff);
+    assert(it != vvFanouts[j].end());
+    vvFanouts[j].erase(it);
   }
   for(int i = 0; i < p->nPos; i++) {
     int j = p->vValues[p->vPos[i] >> 1];
