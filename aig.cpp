@@ -136,7 +136,7 @@ void aigman::getgates(std::vector<int> & gates, std::vector<int> const & inputs,
     vValues[i] = 1;
   }
   for(int i : outputs) {
-    getgates_rec(gates, i);
+    getgates_rec(gates, i >> 1);
   }
 }
 
